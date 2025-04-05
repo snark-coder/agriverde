@@ -1,23 +1,19 @@
 from flask import Flask, render_template, request
 import pickle
 import pandas as pd
+import joblib
+import numpy as np
 
-# Suggested intercropping pairs
-intercropping_pairs = {
-    "maize": ["cowpea", "soybean", "groundnut"],
-    "sorghum": ["pigeonpea", "mungbean"],
-    "cotton": ["soybean", "black gram"],
-    "sugarcane": ["onion", "garlic"],
-    "millets": ["legumes", "pulses"],
-    "wheat": ["mustard", "gram"],
-    "rice": ["sesame", "pulses"],
-    "sunflower": ["cowpea", "mungbean"],
-}
+soil_model = joblib.load('soil_health_model.pkl')
+label_encoder = joblib.load('label_encoder.pkl')
+
+
+
 
 
 # Load model once
 with open("rotation_model.pkl", "rb") as f:
-    model, le_crop, le_soil, le_season, le_target = pickle.load(f)
+    rotation_model, le_crop, le_soil, le_season, le_target = pickle.load(f)
 
 app = Flask(__name__)
 
@@ -129,13 +125,41 @@ def rotation_result():
         "season": [le_season.transform([season])[0]]
     })
 
-    pred = model.predict(input_df)[0]
+    pred = rotation_model.predict(input_df)[0]
     recommendation = le_target.inverse_transform([pred])[0]
 
     message = f"🧠 Based on your input, our model recommends: {recommendation.title()}"
     
 
     return render_template("result.html", message=message)
+
+@app.route('/predict_soil_health', methods=['POST'])
+def predict_soil_health():
+    try:
+        # Get form data
+        pH = float(request.form['ph'])
+        om = float(request.form['om'])
+        n = float(request.form['n'])
+        p = float(request.form['p'])
+        k = float(request.form['k'])
+
+        # Create input array
+        features = np.array([[pH, om, n, p, k]])
+
+        # Predict
+        prediction = soil_model.predict(features)
+        label = label_encoder.inverse_transform(prediction)[0]
+
+        return render_template('result_soil.html', label=label)
+
+    except Exception as e:
+        return f"Error: {e}"
+    
+    @app.route('/soil-form')
+    def soil_form():
+        return render_template('soil_form.html')
+
+
 
 
 
