@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Weather Alerts | AgriVerde</title>
+  <link rel="stylesheet" href="../static/styles.css"/>
+</head>
+<body>
+  <header>
+    <h1>🌾 AgriVerde</h1>
+    <nav>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="crop.html">Crop Recommendation</a></li>
+        <li><a href="soil.html">Soil Health</a></li>
+        <li><a href="weather.html">Weather Alerts</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section class="form-section">
+      <h2>Get Weather Updates</h2>
+      <p>Stay prepared. Get real-time weather alerts for your farm.</p>
+
+      <form action="/weather" method="POST">
+        <label for="city">Enter City/District Name:</label>
+        <input type="text" id="city" name="city" required>
+
+        <button type="submit">Get Weather Alert</button>
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2025 StriveToThrive Team</p>
+  </footer>
+</body>
+</html>

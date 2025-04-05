@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Crop Recommendation | AgriVerde</title>
+  <link rel="stylesheet" href="../static/styles.css"/>
+</head>
+<body>
+  <header>
+    <h1>🌾 AgriVerde</h1>
+    <nav>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="crop.html">Crop Recommendation</a></li>
+        <li><a href="soil.html">Soil Health</a></li>
+        <li><a href="weather.html">Weather Alerts</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section class="form-section">
+      <h2>Crop Recommendation</h2>
+      <p>Enter soil and environment data to get the best crop suggestions.</p>
+
+      <form action="/recommend" method="POST">
+        <label for="ph">Soil pH Level:</label>
+        <input type="number" id="ph" name="ph" step="0.1" required>
+
+        <label for="nitrogen">Nitrogen Content (N):</label>
+        <input type="number" id="nitrogen" name="nitrogen" required>
+
+        <label for="phosphorus">Phosphorus (P):</label>
+        <input type="number" id="phosphorus" name="phosphorus" required>
+
+        <label for="potassium">Potassium (K):</label>
+        <input type="number" id="potassium" name="potassium" required>
+
+        <label for="location">Your Location:</label>
+        <input type="text" id="location" name="location" placeholder="City or District" required>
+
+        <button type="submit">Get Recommendation</button>
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2025 StriveToThrive Team</p>
+  </footer>
+</body>
+</html>

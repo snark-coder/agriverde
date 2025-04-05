@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Smart Crop Rotation</title>
+  <link rel="stylesheet" href="../static/styles.css">
+</head>
+<body>
+  <h1>Smart Crop Rotation Planner</h1>
+  <form method="POST" action="/rotation-result">
+    
+    <label>Previous Crop:</label>
+    <select name="last_crop" required>
+      <option value="rice">Rice</option>
+      <option value="wheat">Wheat</option>
+      <option value="legumes">Legumes</option>
+      <option value="potato">Potato</option>
+      <option value="sugarcane">Sugarcane</option>
+    </select><br><br>
+
+    <label>Soil Type:</label>
+    <select name="soil_type" required>
+      <option value="loamy">Loamy</option>
+      <option value="clay">Clay</option>
+      <option value="sandy">Sandy</option>
+      <option value="acidic">Acidic</option>
+      <option value="alkaline">Alkaline</option>
+    </select><br><br>
+
+    <label>Current Season:</label>
+    <select name="season" required>
+      <option value="kharif">Kharif</option>
+      <option value="rabi">Rabi</option>
+      <option value="summer">Summer</option>
+    </select><br><br>
+
+    <button type="submit">Suggest Crop</button>
+  </form>
+</body>
+</html>
