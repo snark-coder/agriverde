@@ -16,6 +16,12 @@ import joblib
 with open("rotation_model.pkl", "rb") as f:
     rotation_model, le_crop, le_soil, le_season, le_target = pickle.load(f)
 
+
+
+soil_health_model = joblib.load('soil_health_model.pkl')
+label_encoder = joblib.load('label_encoder.pkl')
+
+
 app = Flask(__name__)
 
 WEATHER_API_KEY = "cf0c4fed7889832b998b3d94c52ab29a"
@@ -466,7 +472,7 @@ def predict_soil_health():
         features = np.array([[pH, om, n, p, k]])
 
         # Predict
-        prediction = soil_model.predict(features)
+        prediction = soil_health_model.predict(features)
         label = label_encoder.inverse_transform(prediction)[0]
 
         return render_template('result_soil.html', label=label)
