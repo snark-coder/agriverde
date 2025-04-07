@@ -1,40 +1,367 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Weather Alerts | AgriVerde</title>
-  <link rel="stylesheet" href="../static/styles.css"/>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Weather Alerts | AgriVerde</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}"/>
+    <style>
+        /* Global Styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #4CAF50;
+            padding: 20px;
+            color: white;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2rem;
+        }
+
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        nav ul li {
+            display: inline;
+            margin-right: 20px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 1rem;
+        }
+
+        nav ul li a:hover {
+            text-decoration: underline;
+        }
+
+        main {
+            padding: 20px;
+        }
+
+        section.form-section {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+
+        .location-options {
+            margin-bottom: 20px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #fafafa;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .location-options label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .location-options input[type="text"],
+        .location-options select,
+        .location-options button {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        .location-options select {
+            cursor: pointer;
+            background-color: #fff;
+            transition: border-color 0.3s ease;
+        }
+
+        .location-options select:hover {
+          background-color: #f4f4f4;
+        }
+
+        .location-options button {
+          background-color: #065f46;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            border: none;
+        }
+
+        .location-options button:hover {
+          background-color: #065f46;
+        }
+
+        #map-container {
+            height: 300px;
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-top: 10px;
+            display: none; /* Initially hidden */
+            background-color: #f4f4f4;
+            text-align: center;
+            line-height: 200px;
+        }
+
+        #selected-location {
+            margin-top: 15px;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        #selected-location span {
+            color: #333;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        footer {
+          background-color: #065f46;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            margin-top: 40px;
+        }
+
+        footer p {
+            margin: 0;
+        }
+
+        /* Input and Button for Crops */
+        #crop {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+    </style>
 </head>
 <body>
-  <header>
-    <h1>🌾 AgriVerde</h1>
-    <nav>
-      <ul>
-        <li><a href="index.html">Home</a></li>
-        <li><a href="crop.html">Crop Recommendation</a></li>
-        <li><a href="soil.html">Soil Health</a></li>
-        <li><a href="weather.html">Weather Alerts</a></li>
-      </ul>
-    </nav>
-  </header>
+    <header>
+        <h1>🌾 AgriVerde</h1>
+        <nav>
+          <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/rotation">Crop Recommendation</a></li>
+            <li><a href="/soil">Soil Health</a></li>
+            <li><a href="/weather">Weather Alerts</a></li>
+            <li><a href="/sustainability">Sustainability Check</a></li>
+        </ul>
+        </nav>
+    </header>
 
-  <main>
-    <section class="form-section">
-      <h2>Get Weather Updates</h2>
-      <p>Stay prepared. Get real-time weather alerts for your farm.</p>
+    <main>
+        <section class="form-section">
+            <h2>Get Weather Updates and Crop Advice</h2>
+            <p>Choose how you want to provide your location to get weather information and crop-specific advice.</p>
 
-      <form action="/weather" method="POST">
-        <label for="city">Enter City/District Name:</label>
-        <input type="text" id="city" name="city" required>
+            <form action="/weather" method="POST">
+                <div class="location-options">
+                    <div>
+                        <label for="location-option">Choose Location Method:</label>
+                        <select id="location-option" name="location_option">
+                            <option value="manual">Enter Location</option>
+                            <option value="live">Use Live Location</option>
+                            <option value="map">Pick from Map</option>
+                        </select>
+                    </div>
 
-        <button type="submit">Get Weather Alert</button>
-      </form>
-    </section>
-  </main>
+                    <div id="location-input-container">
+                        <label for="location">Enter Location (City, Country Code):</label>
+                        <input type="text" id="location" name="location" placeholder="e.g., Hyderabad, IN">
+                        <small>Example: Hyderabad, IN or London, UK</small>
+                    </div>
 
-  <footer>
-    <p>© 2025 StriveToThrive Team</p>
-  </footer>
+                    <div id="live-location-container" class="hidden">
+                        <label>Use Your Live Location:</label>
+                        <button type="button" id="get-live-location">Get Live Location</button>
+                        <p id="live-location-status" style="display:none; color: green;">Location fetched!</p>
+                        <input type="hidden" id="latitude" name="latitude">
+                        <input type="hidden" id="longitude" name="longitude">
+                    </div>
+
+                    <div id="map-location-container" class="hidden">
+                        <label>Pick Location from Map:</label>
+                        <button type="button" id="show-map">Show Map</button>
+                        <div id="map-container">
+                            <p>Map will be loaded here. You need to integrate a map library (e.g., Leaflet) to enable location picking.</p>
+                        </div>
+                        <p id="map-selection-status" style="display:none; color: green;">Location selected from map!</p>
+                        <input type="hidden" id="map-latitude" name="map_latitude">
+                        <input type="hidden" id="map-longitude" name="map_longitude">
+                    </div>
+
+                    <div>
+                        <label for="crop">Enter Crop Being Farmed:</label>
+                        <input type="text" id="crop" name="crop" required placeholder="e.g., Wheat, Rice">
+                    </div>
+
+                    <button type="submit">Get Weather Information & Advice</button>
+                </div>
+
+                <div id="selected-location" style="display: none;">
+                    <strong>Selected Location:</strong> <span id="selected-location-text"></span>
+                </div>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2025 StriveToThrive Team</p>
+    </footer>
+
+    <script>
+        const locationOptionSelect = document.getElementById('location-option');
+        const manualLocationContainer = document.getElementById('location-input-container');
+        const liveLocationContainer = document.getElementById('live-location-container');
+        const mapLocationContainer = document.getElementById('map-location-container');
+
+        const manualLocationInput = document.getElementById('location');
+        const getLiveLocationButton = document.getElementById('get-live-location');
+        const liveLocationStatus = document.getElementById('live-location-status');
+        const latitudeInput = document.getElementById('latitude');
+        const longitudeInput = document.getElementById('longitude');
+        const showMapButton = document.getElementById('show-map');
+        const mapContainer = document.getElementById('map-container');
+        const mapLatitudeInput = document.getElementById('map-latitude');
+        const mapLongitudeInput = document.getElementById('map-longitude');
+        const mapSelectionStatus = document.getElementById('map-selection-status');
+        const selectedLocationDiv = document.getElementById('selected-location');
+        const selectedLocationText = document.getElementById('selected-location-text');
+
+        let map;
+        let marker;
+
+        locationOptionSelect.addEventListener('change', () => {
+            manualLocationContainer.classList.add('hidden');
+            liveLocationContainer.classList.add('hidden');
+            mapLocationContainer.classList.add('hidden');
+            selectedLocationDiv.style.display = 'none';
+            manualLocationInput.value = '';
+            latitudeInput.value = '';
+            longitudeInput.value = '';
+            mapLatitudeInput.value = '';
+            mapLongitudeInput.value = '';
+            liveLocationStatus.style.display = 'none';
+            mapSelectionStatus.style.display = 'none';
+            selectedLocationText.textContent = '';
+
+            if (locationOptionSelect.value === 'manual') {
+                manualLocationContainer.classList.remove('hidden');
+            } else if (locationOptionSelect.value === 'live') {
+                liveLocationContainer.classList.remove('hidden');
+            } else if (locationOptionSelect.value === 'map') {
+                mapLocationContainer.classList.remove('hidden');
+            }
+        });
+
+        getLiveLocationButton.addEventListener('click', () => {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        latitudeInput.value = position.coords.latitude;
+                        longitudeInput.value = position.coords.longitude;
+                        manualLocationInput.value = '';
+                        mapLatitudeInput.value = '';
+                        mapLongitudeInput.value = '';
+                        liveLocationStatus.style.display = 'block';
+                        mapSelectionStatus.style.display = 'none';
+                        selectedLocationText.textContent = `Latitude: ${position.coords.latitude.toFixed(2)}, Longitude: ${position.coords.longitude.toFixed(2)}`;
+                        selectedLocationDiv.style.display = 'block';
+                        locationOptionSelect.value = 'live'; // Update dropdown
+                        manualLocationContainer.classList.add('hidden');
+                        mapLocationContainer.classList.add('hidden');
+                        liveLocationContainer.classList.remove('hidden');
+                    },
+                    (error) => {
+                        alert('Error getting live location: ' + error.message);
+                    }
+                );
+            } else {
+                alert('Geolocation is not supported by your browser.');
+            }
+        });
+
+        showMapButton.addEventListener('click', () => {
+            locationOptionSelect.value = 'map'; // Update dropdown
+            manualLocationContainer.classList.add('hidden');
+            liveLocationContainer.classList.add('hidden');
+            mapLocationContainer.classList.remove('hidden');
+            mapContainer.style.display = 'block';
+            if (!map) {
+                mapContainer.innerHTML = "<p>Map will be loaded here. You need to integrate a map library (e.g., Leaflet) to enable location picking.</p>";
+                // --- Leaflet Example (Conceptual - You need to include Leaflet CSS and JS in your <head>): ---
+                /*
+                map = L.map('map-container').setView([20.5937, 78.9629], 5); // Center on India
+
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                }).addTo(map);
+
+                map.on('click', (e) => {
+                    if (marker) {
+                        map.removeLayer(marker);
+                    }
+                    marker = L.marker([e.latlng.lat, e.latlng.lng]).addTo(map);
+                    mapLatitudeInput.value = e.latlng.lat;
+                    mapLongitudeInput.value = e.latlng.lng;
+                    manualLocationInput.value = '';
+                    latitudeInput.value = '';
+                    longitudeInput.value = '';
+                    mapSelectionStatus.style.display = 'block';
+                    liveLocationStatus.style.display = 'none';
+                    selectedLocationText.textContent = Latitude: ${e.latlng.lat.toFixed(2)}, Longitude: ${e.latlng.lng.toFixed(2)};
+                    selectedLocationDiv.style.display = 'block';
+                });
+                */
+            }
+        });
+
+        manualLocationInput.addEventListener('input', () => {
+            latitudeInput.value = '';
+            longitudeInput.value = '';
+            mapLatitudeInput.value = '';
+            mapLongitudeInput.value = '';
+            liveLocationStatus.style.display = 'none';
+            mapSelectionStatus.style.display = 'none';
+            selectedLocationText.textContent = manualLocationInput.value;
+            selectedLocationDiv.style.display = manualLocationInput.value ? 'block' : 'none';
+            locationOptionSelect.value = 'manual'; // Update dropdown
+        });
+    </script>
 </body>
 </html>

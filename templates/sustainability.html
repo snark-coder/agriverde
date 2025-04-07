@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sustainability Check | AgriVerde</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        /* ... (Your existing styles) ... */
+        .form-section {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .form-section label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-section select,
+        .form-section input[type="text"],
+        .form-section input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        .form-section button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        .form-section button:hover {
+            background-color: #45a049;
+        }
+        .form-section small {
+            display: block;
+            color: #777;
+            margin-top: 5px;
+        }
+        .hidden {
+            display: none;
+        }
+        #map-container {
+            height: 300px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🌾 AgriVerde</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/rotation">Crop Recommendation</a></li>
+                <li><a href="/soil">Soil Health</a></li>
+                <li><a href="/weather">Weather Alerts</a></li>
+                <li><a href="/sustainability">Sustainability Check</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="form-section">
+            <h2>Check Your Farm's Sustainability Score</h2>
+            <p>Provide information about your farming practices to get a sustainability assessment.</p>
+            <form action="/calculate_sustainability" method="POST">
+                <div>
+                    <label for="crop">Crop Being Farmed:</label>
+                    <input type="text" id="crop" name="crop" required>
+                </div>
+
+                <div>
+                    <label for="location_option">Choose Location Method:</label>
+                    <select id="location_option" name="location_option">
+                        <option value="manual">Enter Location</option>
+                        <option value="live">Use Live Location</option>
+                        <option value="map">Pick from Map</option>
+                    </select>
+                </div>
+
+                <div id="location-input-container">
+                    <label for="location">Enter Location (City, Country Code):</label>
+                    <input type="text" id="location" name="location" placeholder="e.g., Hyderabad, IN">
+                    <small>Example: Hyderabad, IN or London, UK</small>
+                </div>
+
+                <div id="live-location-container" class="hidden">
+                    <label>Use Your Live Location:</label>
+                    <button type="button" id="get-live-location">Get Live Location</button>
+                    <p id="live-location-status" style="display:none; color: green;">Location fetched!</p>
+                    <input type="hidden" id="latitude" name="latitude">
+                    <input type="hidden" id="longitude" name="longitude">
+                </div>
+
+                <div id="map-location-container" class="hidden">
+                    <label>Pick Location from Map:</label>
+                    <button type="button" id="show-map">Show Map</button>
+                    <div id="map-container">
+                        </div>
+                    <p id="map-selection-status" style="display:none; color: green;">Location selected from map!</p>
+                    <input type="hidden" id="map-latitude" name="map_latitude">
+                    <input type="hidden" id="map-longitude" name="map_longitude">
+                </div>
+
+                <div>
+                    <label for="irrigation_method">Irrigation Method:</label>
+                    <select id="irrigation_method" name="irrigation_method">
+                        <option value="">Select</option>
+                        <option value="flood">Flood Irrigation</option>
+                        <option value="sprinkler">Sprinkler Irrigation</option>
+                        <option value="drip">Drip Irrigation</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="pesticide_use">Pesticide Use:</label>
+                    <select id="pesticide_use" name="pesticide_use">
+                        <option value="">Select</option>
+                        <option value="chemical">Regular Chemical Pesticide Use</option>
+                        <option value="minimal_chemical">Minimal Chemical Pesticide Use</option>
+                        <option value="integrated_pest_management">Integrated Pest Management (IPM)</option>
+                        <option value="organic">Primarily Organic Pesticides</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="tillage_practice">Tillage Practice:</label>
+                    <select id="tillage_practice" name="tillage_practice">
+                        <option value="">Select</option>
+                        <option value="conventional">Conventional Tillage</option>
+                        <option value="reduced">Reduced Tillage</option>
+                        <option value="no_till">No-Till</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="cover_crops">Use of Cover Crops:</label>
+                    <select id="cover_crops" name="cover_crops">
+                        <option value="">Select</option>
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="organic_matter">Estimated Soil Organic Matter (%):</label>
+                    <input type="number" id="organic_matter" name="organic_matter" step="0.1" min="0">
+                    <small>Provide an estimate or based on soil testing.</small>
+                </div>
+
+                <div>
+                    <label for="rotation_diversity">Crop Rotation Diversity (Number of main crop types in rotation):</label>
+                    <input type="number" id="rotation_diversity" name="rotation_diversity" min="1" value="1">
+                    <small>Consider the variety of plant families in your rotation over the past few years.</small>
+                </div>
+
+                <div>
+                    <label for="drainage">Farm Drainage System:</label>
+                    <select id="drainage" name="drainage">
+                        <option value="">Select</option>
+                        <option value="good">Good Drainage</option>
+                        <option value="moderate">Moderate Drainage</option>
+                        <option value="poor">Poor Drainage</option>
+                    </select>
+                </div>
+
+                <button type="submit">Calculate Sustainability Score</button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2025 StriveToThrive Team</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const locationOption = document.getElementById('location_option');
+            const manualLocationInput = document.getElementById('location-input-container');
+            const liveLocationContainer = document.getElementById('live-location-container');
+            const mapLocationContainer = document.getElementById('map-location-container');
+            const getLocationButton = document.getElementById('get-live-location');
+            const liveLocationStatus = document.getElementById('live-location-status');
+            const latitudeInput = document.getElementById('latitude');
+            const longitudeInput = document.getElementById('longitude');
+            const showMapButton = document.getElementById('show-map');
+            const mapContainer = document.getElementById('map-container');
+            const mapLatitudeInput = document.getElementById('map-latitude');
+            const mapLongitudeInput = document.getElementById('map-longitude');
+            const mapSelectionStatus = document.getElementById('map-selection-status');
+
+            function updateLocationVisibility() {
+                manualLocationInput.classList.toggle('hidden', locationOption.value !== 'manual');
+                liveLocationContainer.classList.toggle('hidden', locationOption.value !== 'live');
+                mapLocationContainer.classList.toggle('hidden', locationOption.value !== 'map');
+            }
+
+            locationOption.addEventListener('change', updateLocationVisibility);
+            updateLocationVisibility(); // Initial state
+
+            if (getLocationButton) {
+                getLocationButton.addEventListener('click', function() {
+                    if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition(function(position) {
+                            latitudeInput.value = position.coords.latitude;
+                            longitudeInput.value = position.coords.longitude;
+                            liveLocationStatus.style.display = 'block';
+                        }, function(error) {
+                            alert('Error getting location: ' + error.message);
+                        });
+                    } else {
+                        alert('Geolocation is not supported by your browser.');
+                    }
+                });
+            }
+
+            if (showMapButton && mapContainer) {
+                let map;
+                let marker;
+
+                function initMap() {
+                    map = new google.maps.Map(mapContainer, {
+                        center: {lat: 20.5937, lng: 78.9629}, // Default to India
+                        zoom: 5
+                    });
+
+                    map.addListener('click', function(event) {
+                        if (marker) {
+                            marker.setMap(null);
+                        }
+                        marker = new google.maps.Marker({
+                            position: event.latLng,
+                            map: map
+                        });
+                        mapLatitudeInput.value = event.latLng.lat();
+                        mapLongitudeInput.value = event.latLng.lng();
+                        mapSelectionStatus.style.display = 'block';
+                    });
+                }
+
+                showMapButton.addEventListener('click', initMap);
+
+                // Load Google Maps API dynamically
+                function loadGoogleMapsAPI() {
+                    const script = document.createElement('script');
+                    script.src = "https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&callback=initMap";
+                    script.async = true;
+                    document.head.appendChild(script);
+                }
+
+                // Replace 'YOUR_GOOGLE_MAPS_API_KEY' with your actual API key if you enable map functionality
+                // Note: For this basic implementation, the map functionality might not be fully working without the API key and proper setup.
+                // If you intend to use the map, you'll need to:
+                // 1. Get a Google Maps API key.
+                // 2. Replace 'YOUR_GOOGLE_MAPS_API_KEY' in the script.src.
+                // 3. Ensure the initMap function is correctly defined within the event listener or called after the API loads.
+            }
+        });
+    </script>
+</body>
+</html>

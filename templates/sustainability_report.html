@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sustainability Report | AgriVerde</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        
+        .report-section {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .report-section h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .report-section p {
+            margin-bottom: 15px;
+        }
+        .report-section h3 {
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        .report-section ul {
+            list-style-type: disc;
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+        .report-section ul li {
+            margin-bottom: 5px;
+        }
+        .report-section a {
+            display: inline-block;
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+            margin-right: 10px;
+        }
+        .report-section a:hover {
+            background-color: #0056b3;
+        }
+        .report-section strong {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🌾 AgriVerde</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/rotation">Crop Recommendation</a></li>
+                <li><a href="/soil">Soil Health</a></li>
+                <li><a href="/weather">Weather Alerts</a></li>
+                <li><a href="/sustainability">Sustainability Check</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="report-section">
+            <h2>Sustainability Assessment Report</h2>
+            <p>For crop: <strong>{{ crop|capitalize }}</strong> at location: <strong>{{ location }}</strong></p>
+            <p>Your farm's sustainability score is: <strong>{{ sustainability_score }}%</strong></p>
+
+            {% if sustainability_suggestions %}
+            <h3>Suggestions for Improvement:</h3>
+            <ul>
+                {% for suggestion in sustainability_suggestions %}
+                <li>{{ suggestion }}</li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p>No specific sustainability suggestions based on the provided information.</p>
+            {% endif %}
+
+            <a href="/sustainability">Check Again</a>
+            <a href="/">Back to Home</a>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2025 StriveToThrive Team</p>
+    </footer>
+</body>
+</html>

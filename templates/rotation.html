@@ -3,38 +3,172 @@
 <head>
   <meta charset="UTF-8">
   <title>Smart Crop Rotation</title>
-  <link rel="stylesheet" href="../static/styles.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #e6f4ea, #f9f9f9);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    header {
+      width: 100%;
+      background-color: #16a34a;
+      padding: 20px;
+      color: white;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    header h1 {
+      margin-bottom: 10px;
+      font-size: 28px;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    nav ul li a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      transition: color 0.3s;
+    }
+
+    nav ul li a:hover {
+      color: #bbf7d0;
+    }
+
+    .card {
+      background-color: white;
+      padding: 40px;
+      margin-top: 40px;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      max-width: 500px;
+      width: 90%;
+      transition: transform 0.3s ease;
+    }
+
+    .card:hover {
+      transform: scale(1.01);
+    }
+
+    h1 {
+      text-align: center;
+      color: #16a34a;
+      margin-bottom: 30px;
+      font-size: 24px;
+    }
+
+    label {
+      display: block;
+      margin-top: 20px;
+      margin-bottom: 5px;
+      font-weight: 600;
+      color: #374151;
+    }
+
+    select, button {
+      width: 100%;
+      padding: 12px 14px;
+      margin-top: 5px;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      font-size: 16px;
+      background-color: #f9fafb;
+      transition: border-color 0.3s ease;
+    }
+
+    select:focus, button:focus {
+      outline: none;
+      border-color: #16a34a;
+    }
+
+    button {
+      background-color: #16a34a;
+      color: white;
+      font-weight: bold;
+      margin-top: 30px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    button:hover {
+      background-color: #15803d;
+      transform: scale(1.02);
+    }
+
+    @media (max-width: 600px) {
+      nav ul {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .card {
+        padding: 25px;
+      }
+    }
+  </style>
 </head>
 <body>
-  <h1>Smart Crop Rotation Planner</h1>
-  <form method="POST" action="/rotation-result">
-    
-    <label>Previous Crop:</label>
-    <select name="last_crop" required>
-      <option value="rice">Rice</option>
-      <option value="wheat">Wheat</option>
-      <option value="legumes">Legumes</option>
-      <option value="potato">Potato</option>
-      <option value="sugarcane">Sugarcane</option>
-    </select><br><br>
+  <header>
+    <h1>🌾 AgriVerde</h1>
+    <nav>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/rotation">Crop Recommendation</a></li>
+        <li><a href="/soil">Soil Health</a></li>
+        <li><a href="/weather">Weather Alerts</a></li>
+        <li><a href="/sustainability">Sustainability Check</a></li>
+    </ul>
+    </nav>
+  </header>
 
-    <label>Soil Type:</label>
-    <select name="soil_type" required>
-      <option value="loamy">Loamy</option>
-      <option value="clay">Clay</option>
-      <option value="sandy">Sandy</option>
-      <option value="acidic">Acidic</option>
-      <option value="alkaline">Alkaline</option>
-    </select><br><br>
+  <div class="card">
+    <h1>🌱 Smart Crop Rotation Planner</h1>
+    <form method="POST" action="/rotation-result">
+      <label for="last_crop">Previous Crop:</label>
+      <select name="last_crop" id="last_crop" required>
+        <option value="rice">Rice</option>
+        <option value="wheat">Wheat</option>
+        <option value="legumes">Legumes</option>
+        <option value="potato">Potato</option>
+        <option value="sugarcane">Sugarcane</option>
+      </select>
 
-    <label>Current Season:</label>
-    <select name="season" required>
-      <option value="kharif">Kharif</option>
-      <option value="rabi">Rabi</option>
-      <option value="summer">Summer</option>
-    </select><br><br>
+      <label for="soil_type">Soil Type:</label>
+      <select name="soil_type" id="soil_type" required>
+        <option value="loamy">Loamy</option>
+        <option value="clay">Clay</option>
+        <option value="sandy">Sandy</option>
+        <option value="acidic">Acidic</option>
+        <option value="alkaline">Alkaline</option>
+      </select>
 
-    <button type="submit">Suggest Crop</button>
-  </form>
+      <label for="season">Current Season:</label>
+      <select name="season" id="season" required>
+        <option value="kharif">Kharif</option>
+        <option value="rabi">Rabi</option>
+        <option value="summer">Summer</option>
+      </select>
+
+      <button type="submit">🚜 Suggest Crop</button>
+    </form>
+  </div>
 </body>
 </html>
