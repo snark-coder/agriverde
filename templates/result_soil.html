@@ -2,52 +2,124 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Result</title>
+    <title>Result - AgriVerde</title>
     <style>
-        body {
-            background: #f3f4f6;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(to right, #ecfdf5, #fefce8);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background-color: #047857;
+            padding: 18px 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            transition: color 0.3s ease;
+        }
+
+        nav ul li a:hover {
+            color: #bbf7d0;
         }
 
         .container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            animation: fadeIn 0.8s ease;
+        }
+
+        .result-box {
+            background-color: white;
             max-width: 600px;
-            margin: 100px auto;
-            background: white;
-            padding: 30px;
-            border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            padding: 30px 35px;
+            border-radius: 20px;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
             text-align: center;
         }
 
         h1 {
-            color: #10b981;
-            font-size: 32px;
-            margin-bottom: 20px;
+            font-size: 30px;
+            color: #047857;
+            margin-bottom: 16px;
         }
 
         p {
             font-size: 18px;
             color: #374151;
-            line-height: 1.6;
+            margin-bottom: 28px;
         }
 
         .btn {
             display: inline-block;
-            margin-top: 30px;
-            padding: 10px 20px;
-            background-color: #10b981;
+            padding: 12px 22px;
+            background-color: #047857;
             color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
             text-decoration: none;
-            font-weight: bold;
-            transition: background 0.3s ease;
+            transition: background-color 0.3s ease, transform 0.2s;
         }
 
         .btn:hover {
-            background-color: #059669;
+            background-color: #065f46;
+            transform: translateY(-2px);
+        }
+
+        footer {
+            text-align: center;
+            padding: 12px;
+            background-color: #047857;
+            color: white;
+            font-size: 14px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 600px) {
+            .result-box {
+                padding: 24px 20px;
+                margin: 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            p {
+                font-size: 16px;
+            }
         }
     </style>
 </head>
@@ -62,13 +134,18 @@
                 <li><a href="/sustainability">Sustainability Check</a></li>
             </ul>
         </nav>
-        
     </header>
-    <div class="container">
-        <h1>🌾 Result</h1>
-        <p>{{ label }}</p>
 
-        <a class="btn" href="/">Back to Home</a>
+    <div class="container">
+        <div class="result-box">
+            <h1>🌾 AgriVerde Result</h1>
+            <p>{{ label }}</p>
+            <a class="btn" href="/">Back to Home</a>
+        </div>
     </div>
+
+    <footer>
+        © 2025 StriveToThrive Team
+    </footer>
 </body>
 </html>
